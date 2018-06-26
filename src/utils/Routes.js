@@ -1,0 +1,5 @@
+export const DASHBOARD = '/private/dashboard'
+export const HEADER = '/private'
+export const SETTINGS = '/private/settings'
+export const LOGIN = '/'
+export const CREATE_ACCOUNT = '/account'
