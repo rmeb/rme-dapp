@@ -3,15 +3,26 @@ import {HashRouter as Router, Route, Redirect, Link} from 'react-router-dom'
 import {Dashboard, Settings, Login, CreateAccount} from './screens'
 import Header from './components/Header'
 import Battery from './components/Battery'
+import Error from './components/Error'
 
 import session from './lib/Session'
 
 import './App.css';
 
 class App extends Component {
+  state = {
+    error: ''
+  }
+
   logout = (e) => {
     session.logout()
     window.$('#exitModal').modal('toggle')
+  }
+
+  onError = (e) => {
+    console.error(e)
+    this.setState({error: e.message ? e.message : e})
+    window.scrollTo(0, 0)
   }
 
   render() {
@@ -23,6 +34,7 @@ class App extends Component {
           <PrivateRoute path="/private" component={Header}/>
           <div className="cs-body-margin">
             <PrivateRoute path="/private" component={BatteryPanel}/>
+            <PrivateRoute path="/private" component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
             <PrivateRoute path="/private/dashboard" component={Dashboard}/>
             <PrivateRoute path="/private/settings" component={Settings}/>
           </div>
@@ -33,10 +45,10 @@ class App extends Component {
   }
 }
 
-const BatteryPanel = ({balance, network}) => (
+const BatteryPanel = ({onError}) => (
   <div className="row mb-3 justify-content-end">
     <div className="col-sm-12">
-      <Battery balance={balance} version={network}/>
+      <Battery onError={onError} />
     </div>
   </div>
 )

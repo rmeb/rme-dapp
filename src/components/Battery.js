@@ -22,6 +22,7 @@ export default class Baterry extends Component {
 
   componentWillUnmount() {
     clearInterval(this._timer)
+    clearInterval(this._refundTimer)
   }
 
   refresh = () => {
@@ -39,12 +40,12 @@ export default class Baterry extends Component {
     let account = get_accounts()[0]
     this.setState({recharging: true})
     refund(account).then(data => {
-      console.log(data)
-      let timer = setInterval(() => {
+      this._refundTimer = setInterval(() => {
         getTransaction(data.txHash).then(tx => {
+          console.log('getTx', tx)
           if (tx.blockNumber !== null) {
             this.setState({recharging: false})
-            clearInterval(timer)
+            clearInterval(this._refundTimer)
           }
         }).catch(e => {
           console.error('[recharge]', e)
@@ -54,6 +55,7 @@ export default class Baterry extends Component {
     }).catch(e => {
       console.error('[recharge]', e)
       this.setState({recharging: false})
+      this.props.onError(e)
     })
   }
 
@@ -63,7 +65,7 @@ export default class Baterry extends Component {
         <span className="mr-2">{this.state.network}</span>
         {this.state.recharging ?
           <i className="fas fa-battery-bolt fa-2x"/>:
-          <a className="cs-pointer" data-toggle="modal" data-target="#refundModal">
+          <a data-toggle="modal" data-target="#refundModal" className="cs-pointer">
             <i className={"fas fa-2x fa-battery-" + batteryLevel(this.state.balance / WEIMAX)} />
           </a>
         }
@@ -74,27 +76,25 @@ export default class Baterry extends Component {
 }
 
 const RefundModal = ({submit}) => (
-  <form onSubmit={submit}>
-    <div className="modal fade" id="refundModal" tabIndex="-1" role="dialog">
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Cargar Bateria</h5>
-            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <p>¿Desea cargar la bateria?</p>
-          </div>
-          <div className="modal-footer">
-            <button type="submit" className="btn btn-primary">Si</button>
-            <button type="button" className="btn btn-secondary" data-dismiss="modal">No</button>
-          </div>
+  <div className="modal fade" id="refundModal" tabIndex="-1" role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Cargar Bateria</h5>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>¿Desea cargar la bateria?</p>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-primary" onClick={submit}>Si</button>
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">No</button>
         </div>
       </div>
     </div>
-  </form>
+  </div>
 )
 
 
