@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {HashRouter as Router, Route, Redirect, Link} from 'react-router-dom'
 import {Dashboard, Settings, Login, CreateAccount} from './screens'
+import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS} from './utils/Routes'
 import Header from './components/Header'
 import Battery from './components/Battery'
 import Error from './components/Error'
@@ -29,14 +30,14 @@ class App extends Component {
     return (
       <Router>
         <div className="container">
-          <Route exact path="/" component={Login}/>
-          <Route exact path="/account" component={CreateAccount}/>
-          <PrivateRoute path="/private" component={Header}/>
+          <Route exact path={LOGIN} component={Login}/>
+          <Route exact path={CREATE_ACCOUNT} component={CreateAccount}/>
+          <PrivateRoute path={HEADER} component={Header}/>
           <div className="cs-body-margin">
-            <PrivateRoute path="/private" component={BatteryPanel}/>
-            <PrivateRoute path="/private" component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
-            <PrivateRoute path="/private/dashboard" component={Dashboard}/>
-            <PrivateRoute path="/private/settings" component={Settings}/>
+            <PrivateRoute path={HEADER} component={BatteryPanel}/>
+            <PrivateRoute path={HEADER} component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
+            <PrivateRoute path={DASHBOARD} component={Dashboard} onError={this.onError} />
+            <PrivateRoute path={SETTINGS} component={Settings}/>
           </div>
           <ExitModal onClick={this.logout}/>
         </div>
@@ -55,9 +56,9 @@ const BatteryPanel = ({onError}) => (
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => session.valid() ? (
-      <Component {...props}/>
+      <Component {...props} {...rest}/>
     ) : (
-      <Redirect to={{pathname: "/", state: { from: props.location }}}/>
+      <Redirect to={{pathname: LOGIN, state: { from: props.location }}}/>
     )
   }/>
 );

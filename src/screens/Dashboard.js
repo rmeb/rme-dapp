@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Validations from '../utils/Validations'
+import {sha3_256} from 'js-sha3'
+import {getRecetaXml} from '../lib/Api'
 
 const $ = window.$
 
@@ -11,6 +13,10 @@ export default class Dashboard extends Component {
 
   submit = (e) => {
     e.preventDefault()
+    let {run, pin} = this.state
+    let hash = sha3_256(run.toUpperCase() + ':' + pin)
+
+    getRecetaXml(hash).then(console.log).catch(this.props.onError)
   }
 
   onChange = (e) => {
