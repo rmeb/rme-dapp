@@ -17,6 +17,15 @@
   "devDependencies": {
     "react-scripts": "1.1.4"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmeb/rme-dapp"
+  },
+  "author": "Andres Santander <https://t.me/ocio28>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rmeb/rme-dapp/issues"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import Drug from '../components/Drug'
 import {Link} from 'react-router-dom'
 import {parseRecipeXml} from '../lib/SignService'
-import {getFarmaco, getRecetaXml} from '../lib/Api'
+import {getRecetaXml} from '../lib/Api'
 import {moment} from '../utils/Formats'
 import {DASHBOARD} from '../utils/Routes'
 
@@ -65,8 +66,8 @@ export default class SearchRecipe extends Component {
             <label>{moment(parseInt(this.state.fecha, 10)).format('DD/MM/YYYY')}</label>
           </div>
         </div>
-        <div className="row mb-3">
-          <div className="col-md-6">
+        <div className="row mb-2">
+          <div className="col-md-6 mb-2">
             <div className="card">
               <div className="card-body">
                 <h5 className="mb-1">Establecimiento {establecimiento.name} - Deis: {establecimiento.deis}</h5>
@@ -85,7 +86,7 @@ export default class SearchRecipe extends Component {
             </div>
           </div>
         </div>
-        <div className="row mb-3">
+        <div className="row mb-2">
           <div className="col-md-12">
             <div className="card">
               <div className="card-body">
@@ -97,7 +98,7 @@ export default class SearchRecipe extends Component {
             </div>
           </div>
         </div>
-         <div className="row mb-3">
+         <div className="row mb-2">
            <div className="col-md-12">
              <div className="card">
                <div className="card-body">
@@ -107,7 +108,7 @@ export default class SearchRecipe extends Component {
              </div>
            </div>
          </div>
-         <div className="row mb-3">
+         <div className="row mb-2">
            <div className="col-md-12">
              <div className="card">
                <div className="card-body">
@@ -117,7 +118,7 @@ export default class SearchRecipe extends Component {
              </div>
            </div>
          </div>
-         <div className="row mb-3">
+         <div className="row mb-2">
            <div className="col-md-12">
              <div className="card">
                <div className="card-body">
@@ -127,8 +128,8 @@ export default class SearchRecipe extends Component {
              </div>
            </div>
          </div>
-         <p className="h3">Prescripciones</p>
-         <div className="row mb-3">
+         <p className="h3 mb-3">Prescripciones</p>
+         <div className="row mb-2">
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
@@ -137,27 +138,8 @@ export default class SearchRecipe extends Component {
             </ul>
            </div>
          </div>
-         <Link className="btn btn-primary btn-block" to={DASHBOARD}>Volver</Link>
+         <Link className="btn btn-primary btn-block mb-1" to={DASHBOARD}>Volver</Link>
       </div>
-    )
-  }
-}
-
-class Drug extends Component {
-  state = {
-    dci: '',
-    forma: '',
-    loading: true
-  }
-
-  componentDidMount() {
-    getFarmaco(this.props.codigo).then(drug => this.setState({dci: drug.dci, forma: drug.forma_farmaceutica, loading: false}))
-  }
-
-  render() {
-    if (this.state.loading) return <li className="list-group-item"><i className="fas fa-circle-notch fa-spin fa-2x"></i></li>
-    return (
-      <li className="list-group-item"><strong>{this.state.dci}</strong>, {this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</li>
     )
   }
 }
