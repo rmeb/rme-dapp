@@ -58,6 +58,10 @@ export default class SearchRecipe extends Component {
     })
   }
 
+  dispensar = () => {
+
+  }
+
   render() {
     if (this.state.loading) return <div className="d-flex justify-content-center"><i className="fas fa-circle-notch fa-spin fa-4x"></i></div>
     let {establecimiento, profesional, paciente, prescriptions} = this.state
@@ -136,7 +140,7 @@ export default class SearchRecipe extends Component {
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
-                 <Drug key={i} {...drug} allowed={this.state.allowed}/>
+                 <Drug key={i} {...drug} allowed={this.state.allowed} dispensar={this.dispensar}/>
                ))}
             </ul>
            </div>
