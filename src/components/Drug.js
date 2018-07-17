@@ -63,7 +63,7 @@ class Dispensar extends Component {
       quantity: parseInt(quantity, 10),
       amount_payed: parseInt(amount_payed, 10),
       amount_list: parseInt(amount_list, 10)
-    }),
+    })
     this.setState({quantity: '', amount_list: '', amount_payed: ''})
   }
 
