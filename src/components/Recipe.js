@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {parseRecipeXml} from '../lib/SignService'
 import {getFarmaco} from '../lib/Api'
+import {moment} from '../utils/Formats'
 
 export default class SearchRecipe extends Component {
   state = {
@@ -54,7 +55,7 @@ export default class SearchRecipe extends Component {
       <div>
         <div className="row">
           <div className="col-md-12 text-right">
-            <label>{this.state.fecha}</label>
+            <label>{moment(parseInt(this.state.fecha, 10)).format('DD/MM/YYYY')}</label>
           </div>
         </div>
         <div className="row mb-3">
