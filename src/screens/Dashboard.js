@@ -14,9 +14,9 @@ export default class Dashboard extends Component {
   render() {
     return (
       <div>
-        <h1 className="display-5 mb-4">Receta</h1>
+        <h1 className="display-4 mb-4">Receta</h1>
         {this.state.recipe === null ?
-          <SearchRecipe onRecipe={this.onRecipe} /> :
+          <SearchRecipe onRecipe={this.onRecipe} onError={this.props.onError}/> :
           <Recipe recipe={this.state.recipe}/>}
       </div>
     );

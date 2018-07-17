@@ -3,7 +3,7 @@ import {signing, txutils} from 'eth-lightwallet'
 const SignerProvider = require('ethjs-provider-signer');
 const Web3 = require('web3')
 
-let instanceContract = null
+//let instanceContract = null
 let web3;
 let ks;
 
