@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {HashRouter as Router, Route, Redirect, Link} from 'react-router-dom'
-import {Dashboard, Settings, Login, CreateAccount} from './screens'
-import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS} from './utils/Routes'
+import {Dashboard, Settings, Login, CreateAccount, Recipe} from './screens'
+import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS, RECIPE} from './utils/Routes'
 import Header from './components/Header'
 import Battery from './components/Battery'
 import Error from './components/Error'
@@ -37,6 +37,7 @@ class App extends Component {
             <PrivateRoute path={HEADER} component={BatteryPanel}/>
             <PrivateRoute path={HEADER} component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
             <PrivateRoute path={DASHBOARD} component={Dashboard} onError={this.onError} />
+            <PrivateRoute path={RECIPE} component={Recipe} onError={this.onError} />
             <PrivateRoute path={SETTINGS} component={Settings}/>
           </div>
           <ExitModal onClick={this.logout}/>

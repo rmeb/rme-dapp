@@ -1,7 +1,7 @@
 const $ = window.$
 
 export function parseRecipeXml(recipe)  {
-  let xmlDoc = $.parseXML(recipe)
+  let xmlDoc = $.parseXML(recipe.receta)
   if (xmlDoc !== null) {
     let xml = $(xmlDoc)
     let establecimiento_salud = xml.find('ESTABLECIMIENTO_SALUD')
@@ -21,7 +21,7 @@ export function parseRecipeXml(recipe)  {
       })
     })
 
-    return {
+    return Promise.resolve({
       establecimiento: {
         name: establecimiento_salud.find('NOMBRE').text(),
         deis: establecimiento_salud.find('CODIGO_DEIS').text(),
@@ -57,7 +57,7 @@ export function parseRecipeXml(recipe)  {
       pacient_detail: xml.find('INDICACIONES_AL_PACIENTE').text(),
       farma_detail: xml.find('INDICACIONES_AL_FARMACEUTICO').text(),
       contract: xml.find('CONTRATO_DISPENSACION').text()
-    }
+    })
   }
-  return null
+  return Promise.reject('Xml invalido.')
 }

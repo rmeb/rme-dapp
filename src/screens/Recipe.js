@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom'
 import {parseRecipeXml} from '../lib/SignService'
-import {getFarmaco} from '../lib/Api'
+import {getFarmaco, getRecetaXml} from '../lib/Api'
 import {moment} from '../utils/Formats'
+import {DASHBOARD} from '../utils/Routes'
 
 export default class SearchRecipe extends Component {
   state = {
@@ -39,20 +41,25 @@ export default class SearchRecipe extends Component {
     fecha: '',
     pacient_detail: '',
     farma_detail: '',
-    contract: ''
+    contract: '',
+    loading: true
   }
 
   componentDidMount() {
-    let data = parseRecipeXml(this.props.recipe)
-    if (data !== null) {
-      this.setState(data)
-    }
+    getRecetaXml(this.props.match.params.hash).then(parseRecipeXml).then(recipe => {
+      this.setState({...recipe, loading: false})
+    }).catch(e => {
+      this.setState({loading: false})
+      this.props.onError(e)
+    })
   }
 
   render() {
+    if (this.state.loading) return <div className="d-flex justify-content-center"><i className="fas fa-circle-notch fa-spin fa-4x"></i></div>
     let {establecimiento, profesional, paciente, prescriptions} = this.state
     return (
       <div>
+        <h1 className="display-5 mb-4">Receta</h1>
         <div className="row">
           <div className="col-md-12 text-right">
             <label>{moment(parseInt(this.state.fecha, 10)).format('DD/MM/YYYY')}</label>
@@ -130,6 +137,7 @@ export default class SearchRecipe extends Component {
             </ul>
            </div>
          </div>
+         <Link className="btn btn-primary btn-block" to={DASHBOARD}>Volver</Link>
       </div>
     )
   }

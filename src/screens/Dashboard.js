@@ -1,23 +1,17 @@
 import React, { Component } from 'react';
 import SearchRecipe from '../components/SearchRecipe'
-import Recipe from '../components/Recipe'
+import {RECIPE} from '../utils/Routes'
 
 export default class Dashboard extends Component {
-  state = {
-    recipe: null
-  }
-
-  onRecipe = (result) => {
-    this.setState({recipe: result.receta})
+  onSearch = (hash) => {
+    this.props.history.push(RECIPE.replace(':hash', hash))
   }
 
   render() {
     return (
       <div>
-        <h1 className="display-4 mb-4">Receta</h1>
-        {this.state.recipe === null ?
-          <SearchRecipe onRecipe={this.onRecipe} onError={this.props.onError}/> :
-          <Recipe recipe={this.state.recipe}/>}
+        <h1 className="display-5 mb-4">Buscar Receta</h1>
+        <SearchRecipe onSearch={this.onSearch} onError={this.props.onError}/>
       </div>
     );
   }
