@@ -9,18 +9,25 @@ const KEY = 'prescripcion-dapp-session'
 class Session {
   constructor() {
     this.data = null
+    this.data = null
     if (storage) {
       this.data = JSON.parse(storage.getItem(KEY))
-      if (this.data !== null) {
-        initWeb3(this.data.keystore)
-      }
+    } else {
+      console.log('no existe local storage.')
     }
+  }
+
+  init() {
+    if (this.data !== null) {
+      return initWeb3(this.data.keystore)
+    }
+    return Promise.reject('logoff')
   }
 
   new_session(keystore, rut, token) {
     this.data = {rut, keystore, token}
     storage.setItem(KEY, JSON.stringify(this.data))
-    initWeb3(keystore)
+    return initWeb3(keystore)
   }
 
   logout() {

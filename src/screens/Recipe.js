@@ -3,6 +3,7 @@ import Drug from '../components/Drug'
 import {Link} from 'react-router-dom'
 import {parseRecipeXml} from '../lib/SignService'
 import {getRecetaXml} from '../lib/Api'
+import {isAllowed} from '../lib/Eth'
 import {moment} from '../utils/Formats'
 import {DASHBOARD} from '../utils/Routes'
 
@@ -43,10 +44,12 @@ export default class SearchRecipe extends Component {
     pacient_detail: '',
     farma_detail: '',
     contract: '',
-    loading: true
+    loading: true,
+    allowed: false
   }
 
   componentDidMount() {
+    isAllowed().then(allowed => this.setState({allowed})).catch(console.error)
     getRecetaXml(this.props.match.params.hash).then(parseRecipeXml).then(recipe => {
       this.setState({...recipe, loading: false})
     }).catch(e => {
@@ -133,7 +136,7 @@ export default class SearchRecipe extends Component {
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
-                 <Drug key={i} {...drug}/>
+                 <Drug key={i} {...drug} allowed={this.state.allowed}/>
                ))}
             </ul>
            </div>

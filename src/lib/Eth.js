@@ -1,9 +1,10 @@
+import {AllowanceRegistry} from 'rmeb-contracts'
 import {restore_keystore} from './Lightwallet'
 import {signing, txutils} from 'eth-lightwallet'
 const SignerProvider = require('ethjs-provider-signer');
 const Web3 = require('web3')
 
-//let instanceContract = null
+let instanceContract = null
 let web3;
 let ks;
 
@@ -32,9 +33,9 @@ export function initWeb3(keystore){
     ks.signTransaction = signTransaction
     const provider = new SignerProvider('https://rinkeby.infura.io', ks);
     web3 = new Web3(provider)
-    //initContract()
+    return initContract()
 }
-/*
+
 export function initContract() {
   return web3.eth.net.getId().then(networkId => {
     let artifact = AllowanceRegistry.v1;
@@ -45,37 +46,17 @@ export function initContract() {
       ,gas: 300000,
       //gasPrice: '10000000000'
     });
+    return Promise.resolve()
   })
 }
 
-export function isRegistrar() {
+export function isAllowed() {
   if (instanceContract !== null) {
-    return instanceContract.methods.registrars('0x' + ks.addresses[0]).call()
+    return instanceContract.methods.isAllowed('0x' + ks.addresses[0]).call()
   }
   return Promise.reject('Contrato no inicializado')
 }
 
-export function isAllowed(address) {
-  if (instanceContract !== null) {
-    return instanceContract.methods.isAllowed(address).call()
-  }
-  return Promise.reject('Contrato no inicializado')
-}
-
-export function allowUser(address) {
-  if (instanceContract !== null) {
-    return instanceContract.methods.allowUser(address).send()
-  }
-  return Promise.reject('Contrato no inicializado')
-}
-
-export function denyUser(address) {
-  if (instanceContract !== null) {
-    return instanceContract.methods.denyUser(address).send()
-  }
-  return Promise.reject('Contrato no inicializado')
-}
-*/
 export function get_accounts() {
     return ks.addresses
 }

@@ -5,6 +5,7 @@ import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS, RECIPE} from './util
 import Header from './components/Header'
 import Battery from './components/Battery'
 import Error from './components/Error'
+import Loading from './components/Loading'
 
 import session from './lib/Session'
 
@@ -12,7 +13,12 @@ import './App.css';
 
 class App extends Component {
   state = {
-    error: ''
+    error: '',
+    loading: true
+  }
+
+  componentDidMount() {
+    session.init().then(() => this.setState({loading: false})).catch(this.onError)
   }
 
   logout = (e) => {
@@ -27,6 +33,7 @@ class App extends Component {
   }
 
   render() {
+    if (this.state.loading) return <Loading />
     return (
       <Router>
         <div className="container">

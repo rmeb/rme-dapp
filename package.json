@@ -12,6 +12,7 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-router-dom": "^4.3.1",
+    "rmeb-contracts": "^0.2.1",
     "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {

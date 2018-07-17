@@ -19,7 +19,7 @@ export default class Drug extends Component {
         <div>
           <strong>{this.state.dci}</strong>, {this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.
         </div>
-        <button type="button" className="btn btn-danger btn-sm">Dispensar</button>
+        {this.props.allowed ? <button type="button" className="btn btn-danger btn-sm">Dispensar</button> : null}
       </li>
     )
   }
