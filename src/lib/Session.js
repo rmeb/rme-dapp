@@ -8,9 +8,12 @@ const KEY = 'prescripcion-dapp-session'
 **/
 class Session {
   constructor() {
-    this.data = JSON.parse(storage.getItem(KEY))
-    if (this.data !== null) {
-      initWeb3(this.data.keystore)
+    this.data = null
+    if (storage) {
+      this.data = JSON.parse(storage.getItem(KEY))
+      if (this.data !== null) {
+        initWeb3(this.data.keystore)
+      }
     }
   }
 
