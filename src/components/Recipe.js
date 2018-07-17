@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {parseRecipeXml} from '../lib/SignService'
+import {getFarmaco} from '../lib/Api'
 
 export default class SearchRecipe extends Component {
   state = {
@@ -123,12 +124,31 @@ export default class SearchRecipe extends Component {
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
-                 <li key={i} className="list-group-item">{drug.codigo} {drug.dose} {drug.frequency} {drug.length}</li>
+                 <Drug key={i} {...drug}/>
                ))}
             </ul>
            </div>
          </div>
       </div>
+    )
+  }
+}
+
+class Drug extends Component {
+  state = {
+    dci: '',
+    forma: '',
+    loading: true
+  }
+
+  componentDidMount() {
+    getFarmaco(this.props.codigo).then(drug => this.setState({dci: drug.dci, forma: drug.forma_farmaceutica, loading: false}))
+  }
+
+  render() {
+    if (this.state.loading) return <li className="list-group-item"><i className="fas fa-circle-notch fa-spin fa-2x"></i></li>
+    return (
+      <li className="list-group-item"><strong>{this.state.dci}</strong>, {this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</li>
     )
   }
 }

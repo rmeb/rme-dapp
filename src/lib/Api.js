@@ -1,6 +1,13 @@
 //const APIURL = 'http://192.168.0.25:4000'
 const APIURL = 'https://rx-keyserver.herokuapp.com'
 const RECIPE_API = 'https://servidor-rme-sandbox.herokuapp.com'
+const FARMA_API = 'https://servidor-farmacos-sandbox.herokuapp.com'
+
+export function getFarmaco(codigo) {
+  return fetch(FARMA_API + '/farmaco/' + codigo, {
+    method: 'GET'
+  }).then(response).then(success)
+}
 
 export function getRecetaXml(identifier) {
   return fetch(RECIPE_API + '/receta/' + identifier, {
