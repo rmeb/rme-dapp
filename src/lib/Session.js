@@ -1,7 +1,7 @@
 import {initWeb3} from '../lib/Eth'
 
 const storage = window.localStorage
-const KEY = 'prescripcion-dapp-session'
+const KEY = 'rme-dapp-session'
 
 /**
 * Maneja el localStorage para almacenar la sesion del usuario
