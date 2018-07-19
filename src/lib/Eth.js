@@ -20,7 +20,6 @@ function signTransaction(rawTx, cb) {
     gasLimit: rawTx.gas,
     data: rawTx.data
   }
-  console.log(tx)
   get_derived_key(rawTx.password).then(pwDerivedKey => {
     let contractTx = txutils.createContractTx(rawTx.from, tx)
     let signedTx = signing.signTx(ks, pwDerivedKey, contractTx.tx, rawTx.from)
@@ -59,14 +58,18 @@ export function initDespachoContract(address) {
   })
 }
 
-export function farmacoDispensable(codigo) {
+export function recetados(codigo) {
   if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
 
   let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
-  let recetado = despachoContract.methods.recetado(_codigoFarmaco).call()
-  let despachado = despachoContract.methods.despachado(_codigoFarmaco).call()
+  return despachoContract.methods.recetado(_codigoFarmaco).call()
+}
 
-  return Promise.all([recetado, despachado]).then(values => Promise.resolve(values[0] > values[1]))
+export function despachado(codigo) {
+  if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
+
+  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  return despachoContract.methods.despachado(_codigoFarmaco).call()
 }
 
 export function despachar(password, codigo, cantidad, lista, final) {
@@ -77,7 +80,6 @@ export function despachar(password, codigo, cantidad, lista, final) {
   let _precioLista = web3.utils.toHex(lista)
   let _precioFinal = web3.utils.toHex(final)
 
-  console.log(_codigoFarmaco, _cantidadDespachada, _precioLista, _precioFinal)
   return despachoContract.methods.despachar(_codigoFarmaco, _cantidadDespachada, _precioLista, _precioFinal).send({password})
 }
 

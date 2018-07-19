@@ -14,6 +14,7 @@ import './App.css';
 class App extends Component {
   state = {
     error: '',
+    alerts: [],
     loading: true
   }
 
@@ -24,6 +25,10 @@ class App extends Component {
   logout = (e) => {
     session.logout()
     window.$('#exitModal').modal('toggle')
+  }
+
+  pushAlert = (alert) => {
+    this.setState({alerts: [...this.state.alerts, alert]})
   }
 
   onError = (e) => {
@@ -39,12 +44,12 @@ class App extends Component {
         <div className="container">
           <Route exact path={LOGIN} component={Login}/>
           <Route exact path={CREATE_ACCOUNT} component={CreateAccount}/>
-          <PrivateRoute path={HEADER} component={Header}/>
+          <PrivateRoute path={HEADER} component={Header} alerts={this.state.alerts}/>
           <div className="cs-body-margin">
             <PrivateRoute path={HEADER} component={BatteryPanel}/>
             <PrivateRoute path={HEADER} component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
-            <PrivateRoute path={DASHBOARD} component={Dashboard} onError={this.onError} />
-            <PrivateRoute path={RECIPE} component={Recipe} onError={this.onError} />
+            <PrivateRoute path={DASHBOARD} component={Dashboard} onError={this.onError}/>
+            <PrivateRoute path={RECIPE} component={Recipe} onError={this.onError} pushAlert={this.pushAlert}/>
             <PrivateRoute path={SETTINGS} component={Settings}/>
           </div>
           <ExitModal onClick={this.logout}/>

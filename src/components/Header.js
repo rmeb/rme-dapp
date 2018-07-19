@@ -12,7 +12,7 @@ export default class Header extends Component {
   }
 
   render() {
-    //let path = this.props.history.location.pathname
+    let alerts = this.props.alerts
     return (
       <nav className="navbar fixed-top navbar-expand-md navbar-dark cs-bg-primary">
         <Link className="navbar-brand" to={DASHBOARD}>Receta Medica</Link>
@@ -39,3 +39,19 @@ export default class Header extends Component {
     )
   }
 }
+
+const Alerts = ({alerts}) => (
+  <li className={"nav-item dropdown" + (alerts.length > 0 ? ' active' : '')}>
+    <a className="nav-link dropdown-toggle cs-pointer" id="navbarDropdown" role="button" data-toggle="dropdown"
+      aria-haspopup="true" aria-expanded="false">
+      <i className="fas fa-bell fa-lg"></i> {alerts.length}
+    </a>
+    <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+      <h6 className="dropdown-header">Alertas</h6>
+      <div className="dropdown-divider"></div>
+      {alerts.map((a, i) => (
+        <a className="dropdown-item cs-pointer"><i className="far fa-bell"></i> {a.message}</a>
+      ))}
+    </div>
+  </li>
+)

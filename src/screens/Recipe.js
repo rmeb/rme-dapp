@@ -138,7 +138,11 @@ export default class SearchRecipe extends Component {
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
-                 <Drug key={i} {...drug} allowed={this.state.allowed} password={this.state.password} onError={this.props.onError}/>
+                 <Drug key={i} {...drug} allowed={this.state.allowed}
+                   password={this.state.password}
+                   onError={this.props.onError}
+                   pushAlert={this.props.pushAlert}
+                 />
                ))}
             </ul>
            </div>
