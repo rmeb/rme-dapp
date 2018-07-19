@@ -12,7 +12,7 @@ export default class Header extends Component {
   }
 
   render() {
-    let alerts = this.props.alerts
+    //let alerts = this.props.alerts
     return (
       <nav className="navbar fixed-top navbar-expand-md navbar-dark cs-bg-primary">
         <Link className="navbar-brand" to={DASHBOARD}>Receta Medica</Link>
@@ -39,7 +39,7 @@ export default class Header extends Component {
     )
   }
 }
-
+/*
 const Alerts = ({alerts}) => (
   <li className={"nav-item dropdown" + (alerts.length > 0 ? ' active' : '')}>
     <a className="nav-link dropdown-toggle cs-pointer" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -55,3 +55,4 @@ const Alerts = ({alerts}) => (
     </div>
   </li>
 )
+*/
