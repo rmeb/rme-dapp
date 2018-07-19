@@ -9,7 +9,6 @@ const KEY = 'rme-dapp-session'
 class Session {
   constructor() {
     this.data = null
-    this.data = null
     if (storage) {
       this.data = JSON.parse(storage.getItem(KEY))
     } else {
@@ -21,7 +20,7 @@ class Session {
     if (this.data !== null) {
       return initWeb3(this.data.keystore)
     }
-    return Promise.reject('logoff')
+    return Promise.reject('')
   }
 
   new_session(keystore, rut, token) {
