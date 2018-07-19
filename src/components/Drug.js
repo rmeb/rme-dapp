@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {getFarmaco} from '../lib/Api'
+import {despachar, farmacoDispensable} from '../lib/Eth'
 
 const $ = window.$
 
@@ -8,18 +9,27 @@ export default class Drug extends Component {
     dci: '',
     forma: '',
     loading: true,
-    dispensar: false
+    dispensar: false,
+    dispensing: false,
+    dispensable: false
   }
 
   componentDidMount() {
     getFarmaco(this.props.codigo).then(drug => this.setState({dci: drug.dci, forma: drug.forma_farmaceutica, loading: false}))
+    farmacoDispensable(this.props.codigo).then(dispensable => this.setState({dispensable})).catch(this.props.onError)
   }
 
   dispensar = (data) => {
-    console.log('dispensar', data)
-    this.setState({dispensar: false})
+    this.setState({dispensing: true})
+    despachar(this.props.password, this.props.codigo, data.quantity, data.amount_list, data.amount_payed).then(tx => {
+      console.log(tx)
+      this.setState({dispensing: false, dispensar: false})
+    }).catch(e => {
+      this.setState({dispensing: false})
+      this.props.onError(e)
+    })
   }
-
+//TODO mostrar dispensados y por dispensar, deshabilitar boton si ya fue dispensado, requiere password
   render() {
     if (this.state.loading) return <li className="list-group-item"><i className="fas fa-circle-notch fa-spin fa-2x"></i></li>
     return (
@@ -28,9 +38,9 @@ export default class Drug extends Component {
           <div>
             <strong>{this.state.dci}</strong>, {this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.
           </div>
-          {this.props.allowed ? <button type="button" className="btn btn-success btn-sm" onClick={() => this.setState({dispensar: !this.state.dispensar})}>Dispensar</button> : null}
+          {this.props.allowed && this.state.dispensable ? <button type="button" className="btn btn-success btn-sm" onClick={() => this.setState({dispensar: !this.state.dispensar})}>Dispensar</button> : null}
         </div>
-        <Dispensar onClick={this.dispensar} show={this.state.dispensar}/>
+        <Dispensar onClick={this.dispensar} show={this.state.dispensar} disabled={this.state.dispensing}/>
       </li>
     )
   }
@@ -87,24 +97,28 @@ class Dispensar extends Component {
       <div className="form-row mt-3">
         <div className="form-group col-md-4">
           <label>Cantidad</label>
-          <input id="quantity" className="form-control" value={this.state.quantity} onChange={this.onChange} />
+          <input id="quantity" className="form-control" value={this.state.quantity} onChange={this.onChange} disabled={this.props.disabled}/>
           <div className="invalid-feedback">Ingrese la cantidad.</div>
         </div>
         <div className="form-group col-md-4">
           <label>Precio de lista</label>
-          <input id="amount_list" className="form-control" value={this.state.amount_list} onChange={this.onChange} />
+          <input id="amount_list" className="form-control" value={this.state.amount_list} onChange={this.onChange}  disabled={this.props.disabled}/>
           <div className="invalid-feedback">Ingrese el precio.</div>
         </div>
         <div className="form-group col-md-4">
           <label>Precio pagado</label>
-          <input id="amount_payed" className="form-control" value={this.state.amount_payed} onChange={this.onChange} />
+          <input id="amount_payed" className="form-control" value={this.state.amount_payed} onChange={this.onChange}  disabled={this.props.disabled}/>
           <div className="invalid-feedback">Ingrese el precio.</div>
         </div>
-        <button className="btn btn-danger btn-block" type="button" onClick={this.onClick}>Dispensar</button>
+        <button className="btn btn-danger btn-block" type="button" onClick={this.onClick} disabled={this.props.disabled}><LoadingLabel label="Dispensar" loading={this.props.disabled}/></button>
       </div>
     )
   }
 }
+
+const LoadingLabel = ({loading, label}) => (
+  <div>{loading ? <i className="fa fa-circle-notch fa-spin"></i> : label}</div>
+)
 /*
 const Modal = ({onClick, onChange, quantity, amount_payed, amount_list}) => (
   <div className="modal fade" id={id} tabIndex="-1" role="dialog">

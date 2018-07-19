@@ -3,7 +3,7 @@ import Drug from '../components/Drug'
 import {Link} from 'react-router-dom'
 import {parseRecipeXml} from '../lib/SignService'
 import {getRecetaXml} from '../lib/Api'
-import {isAllowed} from '../lib/Eth'
+import {isAllowed, initDespachoContract} from '../lib/Eth'
 import {moment} from '../utils/Formats'
 import {DASHBOARD} from '../utils/Routes'
 
@@ -45,21 +45,19 @@ export default class SearchRecipe extends Component {
     farma_detail: '',
     contract: '',
     loading: true,
-    allowed: false
+    allowed: false,
+    password: ''
   }
 
   componentDidMount() {
     isAllowed().then(allowed => this.setState({allowed})).catch(console.error)
     getRecetaXml(this.props.match.params.hash).then(parseRecipeXml).then(recipe => {
+      initDespachoContract(recipe.contract)
       this.setState({...recipe, loading: false})
     }).catch(e => {
       this.setState({loading: false})
       this.props.onError(e)
     })
-  }
-
-  dispensar = () => {
-
   }
 
   render() {
@@ -140,13 +138,39 @@ export default class SearchRecipe extends Component {
            <div className="col-md-12">
              <ul className="list-group">
                {prescriptions.map((drug, i) => (
-                 <Drug key={i} {...drug} allowed={this.state.allowed} dispensar={this.dispensar}/>
+                 <Drug key={i} {...drug} allowed={this.state.allowed} password={this.state.password} onError={this.props.onError}/>
                ))}
             </ul>
            </div>
          </div>
          <Link className="btn btn-primary btn-block mb-1" to={DASHBOARD}>Volver</Link>
+         <RequirePassword password={this.state.password} onClick={this.dispensar} onChange={e => this.setState({password: e.target.value})}/>
       </div>
     )
   }
 }
+
+const RequirePassword = ({onClick, password, onChange}) => (
+  <div className="modal fade" id="passwordModal" tabIndex="-1" role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Requiere Contraseña</h5>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label>Contraseña</label>
+            <input id="password" className="form-control" type="password" value={password} onChange={onChange} />
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={onClick}>Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)

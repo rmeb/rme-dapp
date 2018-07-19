@@ -1,15 +1,17 @@
-import {AllowanceRegistry} from 'rmeb-contracts'
+import {DespachoReceta, AllowanceRegistry} from 'rmeb-contracts'
 import {restore_keystore} from './Lightwallet'
 import {signing, txutils} from 'eth-lightwallet'
+
 const SignerProvider = require('ethjs-provider-signer');
 const Web3 = require('web3')
+const BN = Web3.utils.BN;
 
 let instanceContract = null
+let despachoContract = null
 let web3;
 let ks;
 
 function signTransaction(rawTx, cb) {
-  console.log('signing', rawTx)
   let tx = {
     nonce: rawTx.nonce,
     gasPrice: rawTx.gasPrice,
@@ -19,11 +21,9 @@ function signTransaction(rawTx, cb) {
     data: rawTx.data
   }
   console.log(tx)
-  get_derived_key('asdf').then(pwDerivedKey => {
+  get_derived_key(rawTx.password).then(pwDerivedKey => {
     let contractTx = txutils.createContractTx(rawTx.from, tx)
-    console.log(contractTx)
     let signedTx = signing.signTx(ks, pwDerivedKey, contractTx.tx, rawTx.from)
-    console.log(signedTx)
     cb(null, '0x' + signedTx)
   }).catch(e => cb(e))
 }
@@ -42,12 +42,43 @@ export function initContract() {
     let abi = artifact.abi;
     let addr = artifact.networks[networkId].address
     instanceContract = new web3.eth.Contract(abi, addr, {
-      from: '0x' + ks.addresses[0]
-      ,gas: 300000,
+      from: '0x' + ks.addresses[0],
+      gas: 300000,
       //gasPrice: '10000000000'
     });
     return Promise.resolve()
   })
+}
+
+export function initDespachoContract(address) {
+  console.log('initDespachoContract', address)
+  let artifact = DespachoReceta.v1
+  despachoContract = new web3.eth.Contract(artifact.abi, address, {
+    from: '0x' + ks.addresses[0],
+    gas: 300000
+  })
+}
+
+export function farmacoDispensable(codigo) {
+  if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
+
+  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let recetado = despachoContract.methods.recetado(_codigoFarmaco).call()
+  let despachado = despachoContract.methods.despachado(_codigoFarmaco).call()
+
+  return Promise.all([recetado, despachado]).then(values => Promise.resolve(values[0] > values[1]))
+}
+
+export function despachar(password, codigo, cantidad, lista, final) {
+  if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
+
+  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let _cantidadDespachada = web3.utils.toHex(cantidad)
+  let _precioLista = web3.utils.toHex(lista)
+  let _precioFinal = web3.utils.toHex(final)
+
+  console.log(_codigoFarmaco, _cantidadDespachada, _precioLista, _precioFinal)
+  return despachoContract.methods.despachar(_codigoFarmaco, _cantidadDespachada, _precioLista, _precioFinal).send({password})
 }
 
 export function isAllowed() {
@@ -110,9 +141,9 @@ export function from_wei(wei) {
 }
 
 export function sendTransaction(password, tx) {
+  console.log('sendTransaction')
   return get_derived_key(password).then(pwDerivedKey => {
     tx.pwDerivedKey = pwDerivedKey
-    console.log('send', pwDerivedKey)
     return web3.eth.sendTransaction(tx)
   })
 }
