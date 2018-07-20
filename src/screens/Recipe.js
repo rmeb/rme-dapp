@@ -6,6 +6,7 @@ import {getRecetaXml} from '../lib/Api'
 import {isAllowed, initDespachoContract} from '../lib/Eth'
 import {moment} from '../utils/Formats'
 import {DASHBOARD} from '../utils/Routes'
+import session from '../lib/Session'
 
 export default class SearchRecipe extends Component {
   state = {
@@ -50,7 +51,9 @@ export default class SearchRecipe extends Component {
   }
 
   componentDidMount() {
-    isAllowed().then(allowed => this.setState({allowed})).catch(console.error)
+    if (session.valid()) {
+      isAllowed().then(allowed => this.setState({allowed})).catch(console.error)
+    }
     getRecetaXml(this.props.match.params.hash).then(parseRecipeXml).then(recipe => {
       initDespachoContract(recipe.contract)
       this.setState({...recipe, loading: false})

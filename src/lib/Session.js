@@ -12,21 +12,18 @@ class Session {
     if (storage) {
       this.data = JSON.parse(storage.getItem(KEY))
     } else {
-      console.log('no existe local storage.')
+      console.error('no existe local storage.')
     }
   }
 
   init() {
-    if (this.data !== null) {
-      return initWeb3(this.data.keystore)
-    }
-    return Promise.reject('')
+    return initWeb3(this.data)
   }
 
   new_session(keystore, rut, token) {
     this.data = {rut, keystore, token}
     storage.setItem(KEY, JSON.stringify(this.data))
-    return initWeb3(keystore)
+    return initWeb3(this.data)
   }
 
   logout() {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {HashRouter as Router, Route, Redirect, Link} from 'react-router-dom'
+import {HashRouter as Router, Route, Link} from 'react-router-dom'
 import {Dashboard, Settings, Login, CreateAccount, Recipe} from './screens'
 import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS, RECIPE} from './utils/Routes'
 import Header from './components/Header'
@@ -32,7 +32,7 @@ class App extends Component {
   }
 
   onError = (e) => {
-    console.error(e.message)
+    console.error(e)
     this.setState({error: e.message ? e.message : e, loading: false})
     window.scrollTo(0, 0)
   }
@@ -42,14 +42,14 @@ class App extends Component {
     return (
       <Router>
         <div className="container">
-          <Route exact path={LOGIN} component={Login}/>
-          <Route exact path={CREATE_ACCOUNT} component={CreateAccount}/>
-          <PrivateRoute path={HEADER} component={Header} alerts={this.state.alerts}/>
+          <PublicRoute path={HEADER} component={Header} alerts={this.state.alerts}/>
           <div className="cs-body-margin">
             <PrivateRoute path={HEADER} component={BatteryPanel}/>
-            <PrivateRoute path={HEADER} component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
-            <PrivateRoute path={DASHBOARD} component={Dashboard} onError={this.onError}/>
-            <PrivateRoute path={RECIPE} component={Recipe} onError={this.onError} pushAlert={this.pushAlert}/>
+            <PublicRoute path={HEADER} component={Error} message={this.state.error} onClick={() => this.setState({error: ''})}/>
+            <PublicRoute exact path={LOGIN} component={Login}/>
+            <PublicRoute exact path={CREATE_ACCOUNT} component={CreateAccount}/>
+            <PublicRoute exact path={DASHBOARD} component={Dashboard} onError={this.onError}/>
+            <PublicRoute exact path={RECIPE} component={Recipe} onError={this.onError} pushAlert={this.pushAlert}/>
             <PrivateRoute path={SETTINGS} component={Settings}/>
           </div>
           <ExitModal onClick={this.logout}/>
@@ -69,11 +69,11 @@ const BatteryPanel = ({onError}) => (
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={props => session.valid() ? (
-      <Component {...props} {...rest}/>
-    ) : (
-      <Redirect to={{pathname: LOGIN, state: { from: props.location }}}/>
-    )
-  }/>
+      <Component {...props} {...rest}/>) : null }/>
+);
+
+const PublicRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={props => <Component {...props} {...rest}/>}/>
 );
 
 const ExitModal = ({onClick}) => (

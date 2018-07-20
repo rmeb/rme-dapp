@@ -27,12 +27,16 @@ function signTransaction(rawTx, cb) {
   }).catch(e => cb(e))
 }
 
-export function initWeb3(keystore){
-    ks = restore_keystore(keystore)
+export function initWeb3(data){
+  if (data !== null) {
+    ks = restore_keystore(data.keystore)
     ks.signTransaction = signTransaction
-    const provider = new SignerProvider('https://rinkeby.infura.io', ks);
-    web3 = new Web3(provider)
-    return initContract()
+    web3 = new Web3(new SignerProvider('https://rinkeby.infura.io', ks))
+  } else {
+    web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io'))
+  }
+
+  return initContract()
 }
 
 export function initContract() {
@@ -40,8 +44,9 @@ export function initContract() {
     let artifact = AllowanceRegistry.v1;
     let abi = artifact.abi;
     let addr = artifact.networks[networkId].address
+    let user_address = ks ? '0x' + ks.addresses[0] : undefined
     instanceContract = new web3.eth.Contract(abi, addr, {
-      from: '0x' + ks.addresses[0],
+      from: user_address,
       gas: 300000,
       //gasPrice: '10000000000'
     });
@@ -51,9 +56,11 @@ export function initContract() {
 
 export function initDespachoContract(address) {
   console.log('initDespachoContract', address)
+  let user_address = ks ? '0x' + ks.addresses[0] : undefined
   let artifact = DespachoReceta.v1
+
   despachoContract = new web3.eth.Contract(artifact.abi, address, {
-    from: '0x' + ks.addresses[0],
+    from: user_address,
     gas: 300000
   })
 }
