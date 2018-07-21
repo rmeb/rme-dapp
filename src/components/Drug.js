@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {getFarmaco} from '../lib/Api'
-import {despachar, recetados, despachado} from '../lib/Eth'
+import {despachar, recetados, despachado, isRestricted} from '../lib/Eth'
 
 const $ = window.$
 
@@ -10,6 +10,7 @@ export default class Drug extends Component {
     forma: '',
     recetados: 0,
     despachados: 0,
+    restricted: false,
     loading: true,
     dispensar: false,
     dispensing: false
@@ -21,17 +22,19 @@ export default class Drug extends Component {
 
   load = () => {
     let promises = []
-    //getFarmaco(this.props.codigo).then(drug => this.setState({dci: drug.dci, forma: drug.forma_farmaceutica, loading: false}))
     promises.push(getFarmaco(this.props.codigo))
     promises.push(recetados(this.props.codigo))
     promises.push(despachado(this.props.codigo))
+    promises.push(isRestricted(this.props.codigo))
     Promise.all(promises).then(values => {
+      console.log(values)
       let drug = values[0]
       this.setState({
         dci: drug.dci,
         forma: drug.forma_farmaceutica,
         recetados: parseInt(values[1], 10),
         despachados: parseInt(values[2], 10),
+        restricted: values[3],
         loading: false})
     }).catch(e => {
       this.setState({loading: false})
@@ -62,7 +65,12 @@ export default class Drug extends Component {
         </div>
         <p className="mb-1">{this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</p>
         {this._renderButton()}
-        <Dispensar onClick={this.dispensar} despachados={this.state.despachados} recetados={this.state.recetados} show={this.state.dispensar} disabled={this.state.dispensing}/>
+        <Dispensar onClick={this.dispensar}
+          restricted={this.state.restricted}
+          despachados={this.state.despachados}
+          recetados={this.state.recetados}
+          show={this.state.dispensar}
+          disabled={this.state.dispensing}/>
       </li>
     )
   }
@@ -75,7 +83,7 @@ export default class Drug extends Component {
     return (
       <button type="button" className="btn btn-success btn-sm"
         onClick={() => this.setState({dispensar: !this.state.dispensar})}
-        disabled={this.state.despachados >= this.state.recetados}>Dispensar</button>)
+        disabled={this.state.restricted && this.state.despachados >= this.state.recetados}>Dispensar</button>)
   }
 }
 
@@ -95,9 +103,9 @@ class Dispensar extends Component {
       return
     }
     let q = parseInt(quantity, 10)
-    if (q > (this.props.recetados - this.props.despachados)) {
+    if (q && this.props.restricted > (this.props.recetados - this.props.despachados)) {
       $('#quantity').addClass('is-invalid')
-      this.setState({error: 'Quedan ' + (this.props.recetados - this.props.despachados)  + ' por dispensar.'})
+      this.setState({error: 'Medicamento restringido, quedan ' + (this.props.recetados - this.props.despachados)  + ' por dispensar.'})
       return
     }
 
@@ -160,36 +168,3 @@ class Dispensar extends Component {
 const LoadingLabel = ({loading, label}) => (
   <div>{loading ? <i className="fa fa-circle-notch fa-spin"></i> : label}</div>
 )
-/*
-const Modal = ({onClick, onChange, quantity, amount_payed, amount_list}) => (
-  <div className="modal fade" id={id} tabIndex="-1" role="dialog">
-    <div className="modal-dialog" role="document">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Dispensar Medicamento</h5>
-          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div className="modal-body">
-          <div className="form-group">
-            <label>Cantidad</label>
-            <input id="quantity" className="form-control" value={quantity} onChange={onChange} />
-          </div>
-          <div className="form-group">
-            <label>Precio de lista</label>
-            <input id="amount_list" className="form-control" value={amount_list} onChange={onChange} />
-          </div>
-          <div className="form-group">
-            <label>Precio pagado</label>
-            <input id="amount_payed" className="form-control" value={amount_payed} onChange={onChange} />
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={onClick}>Dispensar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-)*/

@@ -6578,9 +6578,9 @@ rlp@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/rlp/-/rlp-2.0.0.tgz#9db384ff4b89a8f61563d92395d8625b18f3afb0"
 
-rmeb-contracts@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/rmeb-contracts/-/rmeb-contracts-0.2.1.tgz#811fe922310e1184807dd013006e7daee60c352b"
+rmeb-contracts@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/rmeb-contracts/-/rmeb-contracts-0.3.0.tgz#4f1169e63532e624d0260cff3b4d23350e7183dd"
 
 run-async@^2.2.0:
   version "2.3.0"

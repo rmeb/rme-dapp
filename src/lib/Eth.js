@@ -1,4 +1,4 @@
-import {DespachoReceta, AllowanceRegistry} from 'rmeb-contracts'
+import {DespachoReceta, AllowanceRegistry, RestrictedRegistry} from 'rmeb-contracts'
 import {restore_keystore} from './Lightwallet'
 import {signing, txutils} from 'eth-lightwallet'
 
@@ -8,6 +8,7 @@ const BN = Web3.utils.BN;
 
 let instanceContract = null
 let despachoContract = null
+let restrictedContract = null
 let web3;
 let ks;
 
@@ -36,22 +37,25 @@ export function initWeb3(data){
     web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io'))
   }
 
-  return initContract()
+  return initContracts()
 }
 
-export function initContract() {
+export function initContracts() {
   return web3.eth.net.getId().then(networkId => {
-    let artifact = AllowanceRegistry.v1;
-    let abi = artifact.abi;
-    let addr = artifact.networks[networkId].address
     let user_address = ks ? '0x' + ks.addresses[0] : undefined
-    instanceContract = new web3.eth.Contract(abi, addr, {
+    instanceContract = createContract(networkId, AllowanceRegistry.v1, {
       from: user_address,
-      gas: 300000,
-      //gasPrice: '10000000000'
-    });
+      gas: 300000
+    })
+    restrictedContract = createContract(networkId, RestrictedRegistry.v1)
+
     return Promise.resolve()
   })
+}
+
+function createContract(networkId, artifact, options) {
+  let address = artifact.networks[networkId].address
+  return new web3.eth.Contract(artifact.abi, address, options)
 }
 
 export function initDespachoContract(address) {
@@ -63,6 +67,13 @@ export function initDespachoContract(address) {
     from: user_address,
     gas: 300000
   })
+}
+
+export function isRestricted(codigo) {
+  if (restrictedContract === null) return Promise.reject('No hay contrato inicializado.')
+
+  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  return restrictedContract.methods.isRestricted(_codigoFarmaco).call()
 }
 
 export function recetados(codigo) {
