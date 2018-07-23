@@ -71,7 +71,7 @@ export function initDespachoContract(address) {
 export function isRestricted(codigo) {
   if (restrictedContract === null) return Promise.reject('No hay contrato inicializado.')
 
-  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let _codigoFarmaco = web3.utils.fromAscii(codigo.toString());
   return restrictedContract.methods.isRestricted(_codigoFarmaco).call()
 }
 
