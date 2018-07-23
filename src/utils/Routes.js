@@ -1,5 +1,5 @@
 export const DASHBOARD = '/'
-export const RECIPE = '/recipe/:hash'
+export const PRESCRIPTION = '/prescription/:hash'
 export const HEADER = '/'
 export const SETTINGS = '/private/settings'
 export const LOGIN = '/login'

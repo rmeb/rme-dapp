@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {HashRouter as Router, Route, Link} from 'react-router-dom'
-import {Dashboard, Settings, Login, CreateAccount, Recipe} from './screens'
-import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS, RECIPE} from './utils/Routes'
+import {Dashboard, Settings, Login, CreateAccount, Prescription} from './screens'
+import {DASHBOARD, HEADER, LOGIN, CREATE_ACCOUNT, SETTINGS, PRESCRIPTION} from './utils/Routes'
 import Header from './components/Header'
 import Battery from './components/Battery'
 import Error from './components/Error'
@@ -49,7 +49,7 @@ class App extends Component {
             <PublicRoute exact path={LOGIN} component={Login}/>
             <PublicRoute exact path={CREATE_ACCOUNT} component={CreateAccount}/>
             <PublicRoute exact path={DASHBOARD} component={Dashboard} onError={this.onError}/>
-            <PublicRoute exact path={RECIPE} component={Recipe} onError={this.onError} pushAlert={this.pushAlert}/>
+            <PublicRoute exact path={PRESCRIPTION} component={Prescription} onError={this.onError} pushAlert={this.pushAlert}/>
             <PrivateRoute path={SETTINGS} component={Settings}/>
           </div>
           <ExitModal onClick={this.logout}/>
