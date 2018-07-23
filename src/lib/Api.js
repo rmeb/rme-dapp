@@ -2,6 +2,17 @@
 const APIURL = 'https://rx-keyserver.herokuapp.com'
 const RECIPE_API = 'https://servidor-rme-sandbox.herokuapp.com'
 const FARMA_API = 'https://servidor-farmacos-sandbox.herokuapp.com'
+const ORACLE_API = 'https://restringidos-oracle.herokuapp.com'
+
+export function isRestricted(codigo) {
+  return fetch(ORACLE_API + '/consultar', {
+    method: 'POST',
+    body: JSON.stringify({codigo}),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response).then(success)
+}
 
 export function getFarmaco(codigo) {
   return fetch(FARMA_API + '/farmaco/' + codigo, {

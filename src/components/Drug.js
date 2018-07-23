@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {getFarmaco} from '../lib/Api'
-import {despachar, recetados, despachado, isRestricted} from '../lib/Eth'
+import {getFarmaco, isRestricted} from '../lib/Api'
+import {despachar, recetados, despachado} from '../lib/Eth'
 
 const $ = window.$
 
