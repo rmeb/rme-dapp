@@ -4,7 +4,6 @@ import {signing, txutils} from 'eth-lightwallet'
 
 const SignerProvider = require('ethjs-provider-signer');
 const Web3 = require('web3')
-const BN = Web3.utils.BN;
 
 let instanceContract = null
 let despachoContract = null
@@ -79,21 +78,21 @@ export function isRestricted(codigo) {
 export function recetados(codigo) {
   if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
 
-  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let _codigoFarmaco = web3.utils.fromAscii(codigo.toString());
   return despachoContract.methods.recetado(_codigoFarmaco).call()
 }
 
 export function despachado(codigo) {
   if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
 
-  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let _codigoFarmaco =  web3.utils.fromAscii(codigo.toString());
   return despachoContract.methods.despachado(_codigoFarmaco).call()
 }
 
 export function despachar(password, codigo, cantidad, lista, final) {
   if (despachoContract === null) return Promise.reject('No hay contrato inicializado.')
 
-  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
+  let _codigoFarmaco = web3.utils.fromAscii(codigo.toString());
   let _cantidadDespachada = web3.utils.toHex(cantidad)
   let _precioLista = web3.utils.toHex(lista)
   let _precioFinal = web3.utils.toHex(final)
