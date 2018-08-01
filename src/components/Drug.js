@@ -48,7 +48,7 @@ export default class Drug extends Component {
       console.log(tx)
       this.load()
       this.setState({dispensing: false, dispensar: false})
-      this.props.pushAlert({type: 'success', message: 'Medicamento dispensado.'})
+      //this.props.pushAlert({type: 'success', message: 'Medicamento dispensado.'})
     }).catch(e => {
       this.setState({dispensing: false})
       this.props.onError(e)

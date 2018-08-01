@@ -62,7 +62,7 @@ export function initDespachoContract(address) {
 
   despachoContract = new web3.eth.Contract(artifact.abi, address, {
     from: user_address,
-    gas: 300000
+    gas: 900000
   })
 }
 
