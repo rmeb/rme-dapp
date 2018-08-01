@@ -63,6 +63,7 @@ export default class Drug extends Component {
           <h5 className="mb-1">{this.state.dci}</h5>
           <small className="text-muted">{this.state.despachados} / {this.state.recetados}</small>
         </div>
+        {this.state.restricted ? <small className="text-muted">*Restringido</small> : null}
         <p className="mb-1">{this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</p>
         {this._renderButton()}
         <Dispensar onClick={this.dispensar}
