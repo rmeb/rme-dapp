@@ -64,7 +64,9 @@ export default class Drug extends Component {
           <small className="text-muted">{this.state.despachados} / {this.state.recetados}</small>
         </div>
         {this.state.restricted ? <small className="text-muted">*Restringido</small> : null}
-        <p className="mb-1">{this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</p>
+        <p className="mb-1">
+          <strong>{this.props.dose} {this.state.forma}</strong> cada <strong>{this.props.frequency}</strong> horas por <strong>{this.props.length}</strong> Dias.
+        </p>
         {this._renderButton()}
         <Dispensar onClick={this.dispensar}
           restricted={this.state.restricted}

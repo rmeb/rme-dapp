@@ -58,7 +58,8 @@ export default class SearchRecipe extends Component {
       initDespachoContract(recipe.contract)
       this.setState({...recipe, loading: false})
     }).catch(e => {
-      this.setState({loading: false})
+      //this.setState({loading: false})
+      this.props.history.push(DASHBOARD)
       this.props.onError(e)
     })
   }
