@@ -13,7 +13,7 @@ export default class SearchRecipe extends Component {
   submit = (e) => {
     e.preventDefault()
     let {run, pin} = this.state
-    let hash = sha3_256(run.toUpperCase() + ':' + pin)
+    let hash = sha3_256(run.toUpperCase() + ':' + pin.toUpperCase())
     this.props.onSearch(hash)
   }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {getFarmaco} from '../lib/Api'
-import {despachar, recetados, despachado, isRestricted} from '../lib/Eth'
+import {getFarmaco, isRestricted} from '../lib/Api'
+import {despachar, recetados, despachado} from '../lib/Eth'
 
 const $ = window.$
 
@@ -48,7 +48,7 @@ export default class Drug extends Component {
       console.log(tx)
       this.load()
       this.setState({dispensing: false, dispensar: false})
-      this.props.pushAlert({type: 'success', message: 'Medicamento dispensado.'})
+      //this.props.pushAlert({type: 'success', message: 'Medicamento dispensado.'})
     }).catch(e => {
       this.setState({dispensing: false})
       this.props.onError(e)
@@ -63,7 +63,10 @@ export default class Drug extends Component {
           <h5 className="mb-1">{this.state.dci}</h5>
           <small className="text-muted">{this.state.despachados} / {this.state.recetados}</small>
         </div>
-        <p className="mb-1">{this.props.dose} {this.state.forma} cada {this.props.frequency} por {this.props.length} Dias.</p>
+        {this.state.restricted ? <small className="text-muted">*Restringido</small> : null}
+        <p className="mb-1">
+          <strong>{this.props.dose} {this.state.forma}</strong> cada <strong>{this.props.frequency}</strong> horas por <strong>{this.props.length}</strong> Dias.
+        </p>
         {this._renderButton()}
         <Dispensar onClick={this.dispensar}
           restricted={this.state.restricted}

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import SearchRecipe from '../components/SearchRecipe'
-import {RECIPE} from '../utils/Routes'
+import {PRESCRIPTION} from '../utils/Routes'
 
 export default class Dashboard extends Component {
   onSearch = (hash) => {
-    this.props.history.push(RECIPE.replace(':hash', hash))
+    this.props.history.push(PRESCRIPTION.replace(':hash', hash))
   }
 
   render() {

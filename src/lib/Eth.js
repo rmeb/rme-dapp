@@ -1,4 +1,4 @@
-import {DespachoReceta, AllowanceRegistry, RestrictedRegistry} from 'rmeb-contracts'
+import {DespachoReceta, AllowanceRegistry} from 'rmeb-contracts'
 import {restore_keystore} from './Lightwallet'
 import {signing, txutils} from 'eth-lightwallet'
 
@@ -7,7 +7,6 @@ const Web3 = require('web3')
 
 let instanceContract = null
 let despachoContract = null
-let restrictedContract = null
 let web3;
 let ks;
 
@@ -46,7 +45,6 @@ export function initContracts() {
       from: user_address,
       gas: 300000
     })
-    restrictedContract = createContract(networkId, RestrictedRegistry.v1)
 
     return Promise.resolve()
   })
@@ -64,15 +62,8 @@ export function initDespachoContract(address) {
 
   despachoContract = new web3.eth.Contract(artifact.abi, address, {
     from: user_address,
-    gas: 300000
+    gas: 900000
   })
-}
-
-export function isRestricted(codigo) {
-  if (restrictedContract === null) return Promise.reject('No hay contrato inicializado.')
-
-  let _codigoFarmaco = web3.utils.toHex(new BN(codigo).toArray())
-  return restrictedContract.methods.isRestricted(_codigoFarmaco).call()
 }
 
 export function recetados(codigo) {
